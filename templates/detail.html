@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block header %}
+<div class="alert alert-dark" role="alert">
+  <h2>詳細ページ</h2>
+</div>
+{% endblock header %}
+
+{% block content %}
+<div class="container">
+  <div class="alert alert-info" role="alert">
+    <p>タイトル：{{ post.title }}</p>
+    <p>投稿者：{{ post.author }}</p>
+    <p><img src="{{ post.image.url }}" width=400></p>
+    <a href="{% url "good" post.pk %}" class="btn btn-primary btn" role="button" aria-pressed="true">いいね</a>
+    <a href="{% url "read" post.pk %}" class="btn btn-secondary btn" role="button" aria-pressed="true">既読</a>
+  </div>
+
+</div>
+{% endblock content %}

@@ -1,9 +1,11 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.contrib.auth import authenticate, login, logout
 from .models import BoardModel
 from django.contrib.auth.decorators import login_required
+from django.views.generic import CreateView
+from django.urls import reverse_lazy
 
 # Create your views here.
 
@@ -44,3 +46,34 @@ def listfunc(request):
 def logoutfunc(request):
     logout(request)
     return redirect("login")
+
+
+def detailfunc(request, pk):
+    post = get_object_or_404(BoardModel, pk=pk)
+    return render(request, "detail.html", {"post": post})
+
+
+def goodfunc(request, pk):
+    post = BoardModel.objects.get(pk=pk)
+    post.good += 1
+    post.save()
+    return redirect("list")
+
+
+def readfunc(request, pk):
+    post = get_object_or_404(BoardModel, pk=pk)
+    username = request.user.get_username()
+    if username in post.readtext:
+        return redirect("list")
+    else:
+        post.read += 1
+        post.readtext = post.readtext + " " + username
+        post.save()
+        return redirect("list")
+
+
+class BoardCreate(CreateView):
+    template_name = "create.html"
+    model = BoardModel
+    fields = ("title", "content", "author", "image")
+    success_url = reverse_lazy("list")
